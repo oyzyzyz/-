@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>くるくる抽選機</title>
+  <title>選択支援ツール</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -70,13 +70,12 @@
 <body>
 
   <div class="container">
-    <canvas id="rouletteCanvas" width="450" height="450"></canvas>
     
     <div class="label">◀</div>
   </div>
 
   <div class="buttons">
-    <button id="startButton">回す</button>
+    <button id="startButton">結果を表示</button>
     <button id="addSectionButton">セクション追加</button>
     <input type="text" id="sectionLabel" placeholder="セクション名" />
     <input type="color" id="sectionColor" value="#ff5733" />
@@ -99,7 +98,6 @@
     let deceleration = 0.05; 
     let stopTimeout; 
 
-    function drawWheel() {
       const sectionAngle = (2 * Math.PI) / sections.length; 
       sections.forEach((section, i) => {
         const startAngle = i * sectionAngle + rotation;
@@ -123,10 +121,6 @@
       });
     }
     
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawWheel();
-    }
     
     document.getElementById("startButton").addEventListener("click", () => {
       if (!spinning) {
