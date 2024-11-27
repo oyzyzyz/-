@@ -76,7 +76,7 @@
   </div>
 
   <div class="buttons">
-    <button id="startButton">スタート</button>
+    <button id="startButton">回す</button>
     <button id="addSectionButton">セクション追加</button>
     <input type="text" id="sectionLabel" placeholder="セクション名" />
     <input type="color" id="sectionColor" value="#ff5733" />
@@ -86,28 +86,25 @@
     const canvas = document.getElementById("rouletteCanvas");
     const ctx = canvas.getContext("2d");
 
-    // 初期セクション
     let sections = [
       { label: "1", color: "#ff5733" },
       { label: "2", color: "#33c1ff" },
       { label: "3", color: "#ffb833" },
     ];
 
-    let rotation = 0; // 現在の回転角度
-    let spinning = false; // 回転中かどうか
-    let spinTimeout; // 回転のタイムアウト
-    let spinSpeed = 0; // 回転速度（初期値は0）
-    let deceleration = 0.05; // 減速の値（小さいほど減速が遅くなる）
-    let stopTimeout; // 自動的に止めるためのタイマー
+    let rotation = 0; 
+    let spinning = false; 
+    let spinTimeout; 
+    let spinSpeed = 0; 
+    let deceleration = 0.05; 
+    let stopTimeout; 
 
-    // セクションの描画
     function drawWheel() {
-      const sectionAngle = (2 * Math.PI) / sections.length; // セクションごとの角度
+      const sectionAngle = (2 * Math.PI) / sections.length; 
       sections.forEach((section, i) => {
         const startAngle = i * sectionAngle + rotation;
         const endAngle = (i + 1) * sectionAngle + rotation;
 
-        // セクションを描画
         ctx.beginPath();
         ctx.arc(225, 225, 225, startAngle, endAngle);
         ctx.lineTo(225, 225);
@@ -115,7 +112,6 @@
         ctx.fill();
         ctx.stroke();
 
-        // セクションラベルを描画
         const midAngle = (startAngle + endAngle) / 2;
         const labelX = 225 + Math.cos(midAngle) * 180;
         const labelY = 225 + Math.sin(midAngle) * 180;
@@ -126,28 +122,24 @@
         ctx.fillText(section.label, labelX, labelY);
       });
     }
-
-    // ルーレットを描画
+    
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawWheel();
     }
-
-    // スタートボタンをクリックしたとき
+    
     document.getElementById("startButton").addEventListener("click", () => {
       if (!spinning) {
         spinning = true;
         document.getElementById("startButton").disabled = true;
-
-        // 回転速度を設定
+        
         spinSpeed = 10;
         let startTime = null;
 
         function spin(timestamp) {
           if (!startTime) startTime = timestamp;
           const progress = timestamp - startTime;
-
-          // 回転を続ける
+          
           rotation = (progress / 10) + rotation;
           draw();
 
@@ -158,58 +150,49 @@
 
         spinTimeout = requestAnimationFrame(spin);
 
-        // 3秒後に自動的にストップ
         stopTimeout = setTimeout(() => {
           spinning = false;
           let speed = spinSpeed;
           let stopAnimation = () => {
-            // 回転速度を減らしていく
             if (speed > 0) {
-              speed -= deceleration; // 減速
-              rotation += speed; // 回転を進める
+              speed -= deceleration;
+              rotation += speed;
               draw();
               spinTimeout = requestAnimationFrame(stopAnimation);
             } else {
-              // 完全に停止
               cancelAnimationFrame(spinTimeout);
               document.getElementById("startButton").disabled = false;
               draw();
             }
           };
 
-          stopAnimation(); // 減速を開始
-        }, 3000); // 3秒後に停止処理開始
+          stopAnimation(); 
+        }, 3000); 
       }
     });
 
-    // セクション追加ボタンのイベント
     document.getElementById("addSectionButton").addEventListener("click", () => {
       const label = document.getElementById("sectionLabel").value;
       const color = document.getElementById("sectionColor").value;
 
       if (label && color) {
-        // 新しいセクションを追加
         sections.push({ label, color });
-
-        // 新しいセクションが追加されたら描画を更新
+        
         draw();
 
-        // 入力フィールドをクリア
         document.getElementById("sectionLabel").value = "";
       } else {
         alert("セクション名と色を入力してください！");
       }
     });
 
-    // スペースキーでスタートボタンをクリックするのと同じ動作をさせる
     document.addEventListener("keydown", (event) => {
-      if (event.key === " " || event.key === "Spacebar") { // スペースキーが押された場合
-        event.preventDefault(); // スペースキーがデフォルトでスクロールを引き起こすのを防ぐ
-        document.getElementById("startButton").click(); // スタートボタンをクリックする
+      if (event.key === " " || event.key === "Spacebar") {
+        event.preventDefault();
+        document.getElementById("startButton").click();
       }
     });
 
-    // 初期描画
     draw();
   </script>
 
